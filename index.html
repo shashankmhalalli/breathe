@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="default"/>
+<meta name="theme-color" content="#c2dbbe"/>
+<title>Breathe</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    height: 100%;
+    background: linear-gradient(160deg, #d4e8d0 0%, #b8d9b2 40%, #c9e0c4 100%);
+    background-attachment: fixed;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+  }
+
+  .wrap {
+    width: 100%;
+    max-width: 420px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.8rem;
+  }
+
+  .header {
+    text-align: center;
+  }
+
+  .header h1 {
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: #3d6e38;
+  }
+
+  .header p {
+    font-size: 12px;
+    color: #5a7a56;
+    margin-top: 4px;
+    opacity: 0.8;
+  }
+
+  .techniques {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    width: 100%;
+  }
+
+  .tech-btn {
+    background: rgba(255,255,255,0.42);
+    border: 1.5px solid rgba(255,255,255,0.65);
+    border-radius: 16px;
+    padding: 12px 14px;
+    cursor: pointer;
+    text-align: left;
+    transition: background 0.2s, box-shadow 0.2s, transform 0.1s;
+    -webkit-tap-highlight-color: transparent;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+
+  .tech-btn:hover { background: rgba(255,255,255,0.58); }
+
+  .tech-btn:active { transform: scale(0.97); }
+
+  .tech-btn.active {
+    background: rgba(255,255,255,0.72);
+    border-color: #5a9e52;
+    box-shadow: 0 0 0 3px rgba(90,158,82,0.18);
+  }
+
+  .t-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: #2e5e2a;
+  }
+
+  .t-hint {
+    font-size: 11px;
+    color: #5a7a56;
+    margin-top: 3px;
+  }
+
+  .t-timing {
+    font-size: 10px;
+    color: #7a9a76;
+    margin-top: 4px;
+    opacity: 0.85;
+  }
+
+  .ring-area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .phase-text {
+    font-size: 22px;
+    font-weight: 500;
+    color: #2e5e2a;
+    min-height: 30px;
+    text-align: center;
+    letter-spacing: 0.02em;
+  }
+
+  svg.ring { overflow: visible; }
+
+  .count-text {
+    font-size: 13px;
+    color: #5a7a56;
+    min-height: 20px;
+    text-align: center;
+  }
+
+  .dots {
+    display: flex;
+    gap: 7px;
+    margin-top: 2px;
+  }
+
+  .dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: rgba(90,158,82,0.22);
+    transition: background 0.35s;
+  }
+
+  .dot.done { background: #4a8e42; }
+
+  .controls {
+    display: flex;
+    gap: 10px;
+    width: 100%;
+  }
+
+  .btn-start {
+    flex: 1;
+    padding: 16px;
+    background: #4a8e42;
+    border: none;
+    border-radius: 16px;
+    font-size: 16px;
+    font-weight: 600;
+    color: #fff;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+    letter-spacing: 0.02em;
+    -webkit-tap-highlight-color: transparent;
+    box-shadow: 0 4px 18px rgba(74,142,66,0.28);
+  }
+
+  .btn-start:hover { background: #3d7a36; }
+  .btn-start:active { transform: scale(0.97); background: #3d7a36; }
+
+  .btn-reset {
+    width: 56px;
+    height: 56px;
+    background: rgba(255,255,255,0.42);
+    border: 1.5px solid rgba(255,255,255,0.65);
+    border-radius: 16px;
+    font-size: 20px;
+    color: #4a7a44;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    -webkit-tap-highlight-color: transparent;
+    flex-shrink: 0;
+  }
+
+  .btn-reset:hover { background: rgba(255,255,255,0.62); }
+  .btn-reset:active { transform: scale(0.97); }
+
+  .footer {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    font-size: 12px;
+    color: #5a7a56;
+    padding-top: 0.75rem;
+    border-top: 1px solid rgba(90,122,86,0.2);
+  }
+
+  .footer b { color: #2e5e2a; }
+
+  /* ── Desktop layout tweaks ── */
+  @media (min-width: 600px) {
+    .wrap { gap: 2rem; }
+    .phase-text { font-size: 26px; }
+    .btn-start { padding: 16px 24px; font-size: 16px; }
+    .btn-reset { width: 58px; height: 58px; }
+  }
+
+  /* ── Short screens (phones in landscape) ── */
+  @media (max-height: 600px) {
+    body { padding: 1rem; align-items: flex-start; }
+    .wrap { gap: 1rem; }
+    svg.ring { width: 140px; height: 140px; }
+  }
+
+  /* ── Very small phones ── */
+  @media (max-width: 360px) {
+    .t-name { font-size: 13px; }
+    .phase-text { font-size: 20px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="header">
+    <h1>Breathe</h1>
+    <p>Pick a technique and follow the ring</p>
+  </div>
+
+  <div class="techniques" id="techGrid"></div>
+
+  <div class="ring-area">
+    <div class="phase-text" id="phaseLabel">Ready</div>
+    <svg class="ring" width="180" height="180" viewBox="0 0 180 180">
+      <circle cx="90" cy="90" r="68" fill="rgba(255,255,255,0.18)" stroke="rgba(255,255,255,0.45)" stroke-width="1.5"/>
+      <circle cx="90" cy="90" r="48" fill="rgba(255,255,255,0.28)" id="innerCircle" style="transition: r 0.12s linear;"/>
+      <circle cx="90" cy="90" r="68" fill="none" stroke="rgba(90,158,82,0.18)" stroke-width="7" stroke-linecap="round"/>
+      <circle cx="90" cy="90" r="68" fill="none" stroke="#4a8e42" stroke-width="7"
+        stroke-dasharray="427" stroke-dashoffset="427" stroke-linecap="round"
+        transform="rotate(-90 90 90)" id="progressRing" style="transition: stroke 0.4s;"/>
+    </svg>
+    <div class="count-text" id="countLabel">Select a technique to begin</div>
+    <div class="dots" id="cycleDots"></div>
+  </div>
+
+  <div class="controls">
+    <button class="btn-start" id="startBtn" onclick="toggleSession()">Start</button>
+    <button class="btn-reset" onclick="resetSession()" title="Reset">↺</button>
+  </div>
+
+  <div class="footer">
+    <span>Cycles: <b id="cycleCount">0</b></span>
+    <span>Session: <b id="sessionTime">0:00</b></span>
+    <span>Target: <b id="targetCycles">—</b></span>
+  </div>
+
+</div>
+
+<script>
+  const techniques = [
+    {
+      name: "4-7-8",
+      hint: "Calm anxiety",
+      timing: "4s · 7s · 8s",
+      phases: [{l:"Inhale",t:4},{l:"Hold",t:7},{l:"Exhale",t:8}],
+      cycles: 4
+    },
+    {
+      name: "Box",
+      hint: "Focus & balance",
+      timing: "4s · 4s · 4s · 4s",
+      phases: [{l:"Inhale",t:4},{l:"Hold",t:4},{l:"Exhale",t:4},{l:"Hold",t:4}],
+      cycles: 4
+    },
+    {
+      name: "4-4-4-6",
+      hint: "Deep relax",
+      timing: "4s · 4s · 4s · 6s",
+      phases: [{l:"Inhale",t:4},{l:"Hold",t:4},{l:"Exhale",t:4},{l:"Rest",t:6}],
+      cycles: 5
+    },
+    {
+      name: "2-1-4-1",
+      hint: "Quick reset",
+      timing: "2s · 1s · 4s · 1s",
+      phases: [{l:"Inhale",t:2},{l:"Hold",t:1},{l:"Exhale",t:4},{l:"Hold",t:1}],
+      cycles: 6
+    }
+  ];
+
+  let cur = 0, running = false, timer = null, sessionTimer = null;
+  let phaseIdx = 0, tick = 0, cyclesDone = 0, sessionSecs = 0;
+
+  const phaseLabel   = document.getElementById("phaseLabel");
+  const countLabel   = document.getElementById("countLabel");
+  const ring         = document.getElementById("progressRing");
+  const inner        = document.getElementById("innerCircle");
+  const cycleCount   = document.getElementById("cycleCount");
+  const sessionTime  = document.getElementById("sessionTime");
+  const targetCycles = document.getElementById("targetCycles");
+  const startBtn     = document.getElementById("startBtn");
+  const techGrid     = document.getElementById("techGrid");
+  const cycleDots    = document.getElementById("cycleDots");
+
+  const CIRC = 427;
+
+  function buildGrid() {
+    techGrid.innerHTML = "";
+    techniques.forEach((t, i) => {
+      const b = document.createElement("button");
+      b.className = "tech-btn" + (i === cur ? " active" : "");
+      b.innerHTML = `<div class="t-name">${t.name}</div><div class="t-hint">${t.hint}</div><div class="t-timing">${t.timing}</div>`;
+      b.onclick = () => {
+        if (!running) {
+          cur = i;
+          buildGrid();
+          buildDots();
+          targetCycles.textContent = techniques[i].cycles;
+        }
+      };
+      techGrid.appendChild(b);
+    });
+  }
+
+  function buildDots() {
+    const t = techniques[cur];
+    cycleDots.innerHTML = "";
+    for (let i = 0; i < t.cycles; i++) {
+      const d = document.createElement("div");
+      d.className = "dot" + (i < cyclesDone ? " done" : "");
+      cycleDots.appendChild(d);
+    }
+  }
+
+  function toggleSession() {
+    running ? pauseSession() : startSession();
+  }
+
+  function startSession() {
+    running = true;
+    startBtn.textContent = "Pause";
+    if (!sessionTimer) {
+      sessionTimer = setInterval(() => {
+        sessionSecs++;
+        const m = Math.floor(sessionSecs / 60);
+        const s = sessionSecs % 60;
+        sessionTime.textContent = m + ":" + (s < 10 ? "0" : "") + s;
+      }, 1000);
+    }
+    runPhase();
+  }
+
+  function pauseSession() {
+    running = false;
+    clearTimeout(timer);
+    startBtn.textContent = "Resume";
+  }
+
+  function resetSession() {
+    running = false;
+    clearTimeout(timer);
+    clearInterval(sessionTimer);
+    sessionTimer = null;
+    phaseIdx = 0; tick = 0; cyclesDone = 0; sessionSecs = 0;
+    phaseLabel.textContent = "Ready";
+    countLabel.textContent = "Select a technique to begin";
+    ring.setAttribute("stroke-dashoffset", CIRC);
+    inner.setAttribute("r", "48");
+    cycleCount.textContent = "0";
+    sessionTime.textContent = "0:00";
+    startBtn.textContent = "Start";
+    buildDots();
+  }
+
+  function runPhase() {
+    if (!running) return;
+    const t = techniques[cur];
+    const phase = t.phases[phaseIdx];
+    const total = phase.t * 10;
+    phaseLabel.textContent = phase.l;
+
+    function tickFn() {
+      if (!running) return;
+      tick++;
+      const pct = tick / total;
+      ring.setAttribute("stroke-dashoffset", Math.round(CIRC * (1 - pct)));
+      countLabel.textContent = Math.ceil((total - tick) / 10) + "s";
+
+      if (phase.l === "Inhale")       inner.setAttribute("r", Math.round(48 + 20 * pct));
+      else if (phase.l === "Exhale")  inner.setAttribute("r", Math.round(68 - 20 * pct));
+      else                            inner.setAttribute("r", "48");
+
+      if (tick >= total) {
+        tick = 0;
+        phaseIdx++;
+        if (phaseIdx >= t.phases.length) {
+          phaseIdx = 0;
+          cyclesDone++;
+          cycleCount.textContent = cyclesDone;
+          buildDots();
+          if (cyclesDone >= t.cycles) {
+            phaseLabel.textContent = "Done";
+            countLabel.textContent = "Session complete";
+            ring.setAttribute("stroke-dashoffset", CIRC);
+            inner.setAttribute("r", "48");
+            running = false;
+            startBtn.textContent = "Start";
+            clearInterval(sessionTimer);
+            sessionTimer = null;
+            return;
+          }
+        }
+        timer = setTimeout(runPhase, 80);
+      } else {
+        timer = setTimeout(tickFn, 100);
+      }
+    }
+    tickFn();
+  }
+
+  buildGrid();
+  buildDots();
+  targetCycles.textContent = techniques[cur].cycles;
+</script>
+</body>
+</html>
